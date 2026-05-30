@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spatial Training Room — APL Data Factory</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f7f7;
+      --border: #e4e4e4;
+      --text: #1a1a1a;
+      --text2: #555;
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --tag-bg: #eff6ff;
+      --tag-border: #bfdbfe;
+      --tag-text: #1e40af;
+      --code-bg: #f1f5f9;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; gap: 24px;
+      height: 48px;
+    }
+    nav .logo { font-weight: 700; font-size: 0.9em; color: var(--text); text-decoration: none; }
+    nav a { font-size: 0.85em; color: var(--text2); text-decoration: none; }
+    nav a:hover { color: var(--accent); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e40af 100%);
+      color: white;
+      padding: 72px 24px 56px;
+      text-align: center;
+    }
+    .hero h1 { font-size: clamp(1.6em, 4vw, 2.4em); font-weight: 800; line-height: 1.2; max-width: 720px; margin: 0 auto 12px; }
+    .hero .subtitle { font-size: 1.05em; color: #93c5fd; margin-bottom: 28px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-links { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+    .hero-links a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 20px; border-radius: 6px;
+      font-size: 0.88em; font-weight: 600; text-decoration: none;
+      transition: opacity .15s;
+    }
+    .hero-links a:hover { opacity: 0.85; }
+    .btn-primary { background: white; color: var(--accent2); }
+    .btn-outline { background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.5); }
+
+    .hero-stats {
+      display: flex; gap: 28px; flex-wrap: wrap; justify-content: center;
+      padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .hstat { text-align: center; }
+    .hstat .n { font-size: 2.2em; font-weight: 800; color: #93c5fd; line-height: 1; }
+    .hstat .l { font-size: 0.72em; color: #cbd5e1; margin-top: 2px; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+    section { margin-top: 56px; }
+    h2 { font-size: 1.25em; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Abstract ── */
+    .abstract-box {
+      background: var(--bg2); border-left: 4px solid var(--accent);
+      padding: 20px 24px; border-radius: 0 8px 8px 0;
+      font-size: 0.95em; color: var(--text2); line-height: 1.75;
+    }
+
+    /* ── Highlights ── */
+    .highlights { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .highlight-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px;
+    }
+    .highlight-card .icon { font-size: 1.8em; margin-bottom: 10px; }
+    .highlight-card h3 { font-size: 0.9em; font-weight: 700; margin-bottom: 6px; }
+    .highlight-card p { font-size: 0.82em; color: var(--text2); line-height: 1.6; }
+
+    /* ── Architecture ── */
+    .arch {
+      background: #0f172a; color: #e2e8f0;
+      border-radius: 10px; padding: 24px 28px;
+      font-family: "Cascadia Code", "Consolas", monospace;
+      font-size: 0.82em; line-height: 1.9;
+      overflow-x: auto;
+    }
+    .arch .comment { color: #64748b; }
+    .arch .kw { color: #93c5fd; }
+    .arch .arrow { color: #34d399; }
+
+    /* ── Validation ── */
+    .validation-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .v-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px; text-align: center;
+    }
+    .v-card .tmpl { font-weight: 700; font-size: 1em; }
+    .v-card .cat { font-size: 0.72em; color: var(--text2); margin: 3px 0; min-height: 2.8em; }
+    .v-card .result { font-size: 0.78em; color: var(--green); font-weight: 600; }
+
+    .validation-summary {
+      background: #f0fdf4; border: 1px solid #86efac;
+      border-radius: 8px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .validation-summary .big { font-size: 2.2em; font-weight: 800; color: var(--green); }
+    .validation-summary p { font-size: 0.88em; color: #166534; line-height: 1.5; }
+
+    /* ── Template Table ── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    thead th { background: var(--bg2); padding: 10px 14px; text-align: left; font-weight: 600; white-space: nowrap; }
+    tbody td { padding: 9px 14px; border-top: 1px solid var(--border); }
+    tbody tr:hover td { background: #f9fafb; }
+    .badge {
+      display: inline-block; padding: 2px 9px;
+      border-radius: 10px; font-size: 0.78em; font-weight: 600;
+    }
+    .badge-ok { background: #dcfce7; color: #166534; }
+    .badge-skip { background: #fef3c7; color: #92400e; }
+    .score-bar {
+      display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .score-bar .bar { height: 6px; border-radius: 3px; background: var(--accent); }
+
+    /* ── Tag ── */
+    .tag {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 4px; font-size: 0.72em; font-weight: 600;
+      background: var(--tag-bg); color: var(--tag-text); border: 1px solid var(--tag-border);
+      margin-right: 4px;
+    }
+
+    /* ── Fix callout ── */
+    .fix-box {
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    }
+    .fix-header {
+      background: var(--bg2); padding: 12px 20px;
+      font-weight: 600; font-size: 0.88em;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .fix-body { padding: 16px 20px; font-size: 0.88em; color: var(--text2); line-height: 1.7; }
+    .fix-body code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.92em; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 32px 24px;
+      font-size: 0.78em; color: var(--text2);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 48px 16px 40px; }
+      .hstat .n { font-size: 1.6em; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="logo" href="#">Spatial Training Room</a>
+  <a href="#abstract">Abstract</a>
+  <a href="#templates">Templates</a>
+  <a href="#validation">Validation</a>
+  <a href="#architecture">Architecture</a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>Spatial Training Room</h1>
+  <p class="subtitle">An Automated APL Data Factory for Active Spatial Perception in 3D Indoor Scenes</p>
+  <div class="hero-links">
+    <a href="https://github.com/yyyybq/" class="btn-primary">&#x1F4C1; GitHub</a>
+    <a href="https://arxiv.org/abs/2506.21458" class="btn-outline">&#x1F4C4; Related Paper (MindCube)</a>
+    <a href="https://baiqiaoyin.github.io/" class="btn-outline">&#x1F464; Author Homepage</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="n">19</div><div class="l">Active Task Templates</div></div>
+    <div class="hstat"><div class="n">57</div><div class="l">Generated Tasks (fixed_v6)</div></div>
+    <div class="hstat"><div class="n">0%</div><div class="l">Init Answerability (target ✓)</div></div>
+    <div class="hstat"><div class="n">100%</div><div class="l">Submit Coverage</div></div>
+    <div class="hstat"><div class="n">0.79</div><div class="l">Avg Expert Score</div></div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Abstract -->
+  <section id="abstract">
+    <h2>Abstract</h2>
+    <div class="abstract-box">
+      <strong>Spatial Training Room</strong> is an automated data factory that converts a 3D indoor reconstruction
+      (Gaussian Splatting scene) + per-object AABB annotations + room polygon maps into
+      <em>Active Perception Learning (APL)</em> training samples.
+      Each sample is a 4D question:
+      <code style="background:#e0e7ff;padding:1px 6px;border-radius:4px;color:#3730a3">
+        (init_view, expert_action_sequence, target_view, question, answer)
+      </code>.
+      The initial viewpoint is deliberately selected so the question is <strong>unanswerable</strong>—
+      the agent must actively navigate (pan, tilt, translate) to gather sufficient visual evidence before answering.
+      Templates cover 19 spatial reasoning categories: occlusion, cross-room, counting, configuration,
+      distance comparison, and more.
+    </div>
+  </section>
+
+  <!-- Highlights -->
+  <section>
+    <h2>Key Highlights</h2>
+    <div class="highlights">
+      <div class="highlight-card">
+        <div class="icon">&#x1F4F7;</div>
+        <h3>Active Perception by Design</h3>
+        <p>Every init view is validated to be unanswerable under submit-time slot semantics. The agent must move to solve the task.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x1F3D7;</div>
+        <h3>Real 3D Scenes</h3>
+        <p>Built on Gaussian Splatting reconstructions of real indoor spaces with full room topology, portals, and object AABB annotations.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x1F9EA;</div>
+        <h3>22 Template Types</h3>
+        <p>YAML-driven task skeletons covering distance, occlusion, size, count, configuration, cross-room, and navigability reasoning.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x1F4CA;</div>
+        <h3>Expert Trajectory Search</h3>
+        <p>Each task includes an automatically found expert action sequence that achieves full slot coverage with the shortest path.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Validation -->
+  <section id="validation">
+    <h2>Init-View Answerability Validation</h2>
+    <p style="font-size:0.9em;color:var(--text2);margin-bottom:20px">
+      Probe regression on 5 representative templates × 5 tasks (25 total).
+      Submit-time slot coverage evaluated at the <em>initial frame only</em>.
+      A correctly designed task has 0 answerable tasks at init.
+    </p>
+    <div class="validation-grid">
+      <div class="v-card">
+        <div class="tmpl">T04</div>
+        <div class="cat">Actual size comparison</div>
+        <div class="result">&#x2714; 0 / 5 answerable</div>
+      </div>
+      <div class="v-card">
+        <div class="tmpl">T08</div>
+        <div class="cat">Configuration / arrangement</div>
+        <div class="result">&#x2714; 0 / 5 answerable</div>
+      </div>
+      <div class="v-card">
+        <div class="tmpl">T17</div>
+        <div class="cat">Occluded object existence</div>
+        <div class="result">&#x2714; 0 / 5 answerable</div>
+      </div>
+      <div class="v-card">
+        <div class="tmpl">T23</div>
+        <div class="cat">Cross-room existence</div>
+        <div class="result">&#x2714; 0 / 5 answerable</div>
+      </div>
+      <div class="v-card">
+        <div class="tmpl">T27</div>
+        <div class="cat">Zone counting</div>
+        <div class="result">&#x2714; 0 / 5 answerable</div>
+      </div>
+    </div>
+    <div class="validation-summary">
+      <div class="big">0 / 25</div>
+      <p><strong>Init answerability = 0.0%</strong> across all probe tasks.<br>
+      The <code style="background:#dcfce7;padding:1px 5px;border-radius:3px;color:#166534">tier2_override</code>
+      slot fix ensures strict submit-time semantics are applied when selecting the initial viewpoint.<br>
+      Report: <code>out/fixed_v6_probe_init_submit_check.json</code></p>
+    </div>
+  </section>
+
+  <!-- Template Catalogue -->
+  <section id="templates">
+    <h2>Template Catalogue — fixed_v6</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Tasks</th>
+            <th>Score</th>
+            <th>Avg Steps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>T01</td><td>Appearance discrimination</td><td><span class="tag">occlusion</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:70px"></div>0.70</div></td><td>8</td></tr>
+          <tr><td>T04</td><td>Actual size comparison</td><td><span class="tag">spatial</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:90px"></div>0.90</div></td><td>3</td></tr>
+          <tr><td>T05</td><td>Actual distance comparison</td><td><span class="tag">spatial</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:66px"></div>0.66</div></td><td>9</td></tr>
+          <tr><td>T06</td><td>Passage width assessment</td><td><span class="tag">navigation</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:74px"></div>0.74</div></td><td>7</td></tr>
+          <tr><td>T08</td><td>Configuration / arrangement</td><td><span class="tag">spatial</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:66px"></div>0.66</div></td><td>9</td></tr>
+          <tr><td>T11</td><td>Single vs. multi instance</td><td><span class="tag">counting</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:95px"></div>0.95</div></td><td>2</td></tr>
+          <tr><td>T13</td><td>Occlusion → category</td><td><span class="tag">occlusion</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:86px"></div>0.86</div></td><td>4</td></tr>
+          <tr style="color:#aaa"><td>T14</td><td>Front-face orientation</td><td><span class="tag" style="opacity:.5">annotation</span></td><td><span class="badge badge-skip">0 / 3</span></td><td>—</td><td>—</td></tr>
+          <tr style="color:#aaa"><td>T15</td><td>Label reading</td><td><span class="tag" style="opacity:.5">annotation</span></td><td><span class="badge badge-skip">0 / 3</span></td><td>—</td><td>—</td></tr>
+          <tr style="color:#aaa"><td>T16</td><td>Front/back difference</td><td><span class="tag" style="opacity:.5">annotation</span></td><td><span class="badge badge-skip">0 / 3</span></td><td>—</td><td>—</td></tr>
+          <tr><td>T17</td><td>Occluded object existence</td><td><span class="tag">occlusion</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:95px"></div>0.95</div></td><td>2</td></tr>
+          <tr><td>T18</td><td>Occluded object category</td><td><span class="tag">occlusion</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:63px"></div>0.63</div></td><td>10</td></tr>
+          <tr><td>T19</td><td>Occluded object completeness</td><td><span class="tag">occlusion</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:77px"></div>0.77</div></td><td>6</td></tr>
+          <tr><td>T20</td><td>Local direction search</td><td><span class="tag">navigation</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:90px"></div>0.90</div></td><td>3</td></tr>
+          <tr><td>T21</td><td>Nearest-neighbor target</td><td><span class="tag">spatial</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:60px"></div>0.60</div></td><td>11</td></tr>
+          <tr><td>T23</td><td>Cross-room existence</td><td><span class="tag">cross-room</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:86px"></div>0.86</div></td><td>4</td></tr>
+          <tr><td>T24</td><td>Doorway direction</td><td><span class="tag">navigation</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:74px"></div>0.74</div></td><td>7</td></tr>
+          <tr><td>T26</td><td>Occlusion counting</td><td><span class="tag">counting</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:86px"></div>0.86</div></td><td>4</td></tr>
+          <tr><td>T27</td><td>Zone counting</td><td><span class="tag">counting</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:60px"></div>0.60</div></td><td>11</td></tr>
+          <tr><td>T29</td><td>Contact relationship</td><td><span class="tag">spatial</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:90px"></div>0.90</div></td><td>3</td></tr>
+          <tr><td>T32</td><td>Connectivity judgment</td><td><span class="tag">navigation</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:95px"></div>0.95</div></td><td>2</td></tr>
+          <tr><td>T33</td><td>Passage traversability</td><td><span class="tag">navigation</span></td><td><span class="badge badge-ok">3 / 3</span></td><td><div class="score-bar"><div class="bar" style="width:70px"></div>0.70</div></td><td>8</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.78em;color:var(--text2);margin-top:10px">
+      T14/T15/T16 skipped: scene <code>0267_840790</code> lacks per-object <code>front_normal</code> / <code>label_side</code> annotations.
+    </p>
+  </section>
+
+  <!-- Architecture -->
+  <section id="architecture">
+    <h2>System Architecture</h2>
+    <div class="arch">
+<span class="comment"># Input</span>
+<span class="kw">scene/</span>   3D Gaussian Splatting reconstruction + AABB labels + room polygons
+<span class="kw">templates/p0/*.yaml</span>   task "skeletons" — evidence slots, QA format, scoring
+
+<span class="arrow">↓</span>
+<span class="kw">task_generation/apl_tasks/template_active_generator.py</span>
+   Instantiate skeleton with scene objects
+   Select init view  <span class="comment"># init must NOT satisfy slots (submit-time check)</span>
+   Expert search     <span class="comment"># BFS / greedy over camera actions</span>
+   Score trajectory  <span class="comment"># coverage × slot satisfaction</span>
+
+<span class="arrow">↓</span>
+<span class="kw">out/fixed_v6/*.jsonl</span>   one line = one task with full expert trajectory
+
+<span class="arrow">↓</span>
+<span class="kw">testbench/render_real_tasks.py</span>
+   Render trajectory frames via Gaussian Splatting (CPU splat fallback)
+
+<span class="arrow">↓</span>
+<span class="kw">testbench/build_review_html.py</span>   self-contained local review HTML
+    </div>
+  </section>
+
+  <!-- Fix Note -->
+  <section>
+    <h2>Key Fix: tier2_override Init-View Selection</h2>
+    <div class="fix-box">
+      <div class="fix-header">
+        &#x1F527; <code>task_generation/apl_tasks/template_active_generator.py</code>
+        &mdash; Strict submit-time init check
+      </div>
+      <div class="fix-body">
+        <p>
+          Slots with <code>tier2_override</code> (e.g., <em>target must be fully invisible at init</em>)
+          previously used the raw predicate fraction for the init-view rejection test.
+          This allowed some tier2 slots to pass the init check even when the submit-time
+          <code>slot_satisfied(..., submit_only=True)</code> would have rejected them.
+        </p>
+        <br>
+        <p>
+          <strong>Fix:</strong> the init-view loop now branches on <code>s.tier2_override</code>:
+          tier2 slots call <code>slot_satisfied()</code> with <code>submit_only=True</code>;
+          regular slots compare <code>frac ≥ threshold</code> as before.
+          The init view is only rejected when <em>enough</em> slots are satisfied under this
+          stricter criterion—ensuring tasks remain unanswerable at the starting viewpoint.
+        </p>
+        <br>
+        <p><strong>Result:</strong> init answerability drops to <strong>0 / 25 = 0.0%</strong> on the probe regression.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>Spatial Training Room &mdash; fixed_v6 &nbsp;|&nbsp; Scene: <code>0267_840790</code> &nbsp;|&nbsp; seed=42</p>
+  <p style="margin-top:6px">
+    <a href="https://baiqiaoyin.github.io/">Baiqiao Yin</a> &nbsp;&middot;&nbsp; 2026
+  </p>
+</footer>
+
+</body>
+</html>
