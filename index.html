@@ -210,9 +210,7 @@ tbody tr:hover td{background:#fafafa;}
 
 <div class="topbar">
   <h1>Spatial Training Room</h1>
-  <a href="https://github.com/yyyybq/">GitHub</a>
-  <a href="https://arxiv.org/abs/2506.21458">MindCube Paper</a>
-  <span class="sub">fixed_v6 &nbsp;·&nbsp; 19 templates &nbsp;·&nbsp; 168 images</span>
+  <span class="sub">fixed_v7 &nbsp;·&nbsp; 19 templates &nbsp;·&nbsp; 168 images</span>
 </div>
 
 <div class="layout">
@@ -231,11 +229,7 @@ tbody tr:hover td{background:#fafafa;}
     <div class="hero">
       <h1>Spatial Training Room</h1>
       <p class="sub">An Automated APL Data Factory for Active Spatial Perception in 3D Indoor Scenes</p>
-      <div class="hero-links">
-        <a href="https://github.com/yyyybq/" class="btn-w">&#x1F4C1; GitHub</a>
-        <a href="https://arxiv.org/abs/2506.21458" class="btn-o">&#x1F4C4; MindCube Paper</a>
-        <a href="https://baiqiaoyin.github.io/" class="btn-o">&#x1F464; Homepage</a>
-      </div>
+
       <div class="hero-stats">
         <div class="hstat"><div class="n">19</div><div class="l">Active Templates</div></div>
         <div class="hstat"><div class="n">57</div><div class="l">Generated Tasks</div></div>
@@ -260,39 +254,6 @@ tbody tr:hover td{background:#fafafa;}
         cross-room, counting, configuration, distance, and navigability.
       </div>
 
-      <div class="section-h">System Pipeline</div>
-      <div class="arch">
-<span class="c"># ── Input ─────────────────────────────────────────────────────────</span>
-<span class="k">scene/</span>             3D Gaussian Splatting reconstruction + AABB labels + room polygons
-<span class="k">templates/p0/*.yaml</span>  task "skeletons" — evidence slots, QA format, scoring rules
-
-<span class="ar">↓</span>
-<span class="k">template_active_generator.py</span>
-   Instantiate skeleton with scene objects
-   Select init view   <span class="c"># MUST be unanswerable (tier2_override fix applied)</span>
-   Expert BFS search  <span class="c"># shortest path to full slot coverage</span>
-
-<span class="ar">↓</span>
-<span class="k">out/fixed_v6/*.jsonl</span>   one line = one task with full expert trajectory
-
-<span class="ar">↓</span>
-<span class="k">render_real_tasks.py</span>   render trajectory frames via Gaussian Splatting (CPU splat)
-      </div>
-
-      <div class="section-h">Key Fix: tier2_override Init-View Selection</div>
-      <div class="fix-box">
-        <div class="fix-hdr">&#x1F527; template_active_generator.py — strict submit-time init check</div>
-        <div class="fix-body">
-          Slots with <code>tier2_override</code> (e.g. target must be fully invisible at init) previously
-          used the raw predicate fraction for the init-view rejection test, allowing some tier2 slots to
-          pass even when <code>slot_satisfied(..., submit_only=True)</code> would reject them.
-          The fix branches on <code>s.tier2_override</code> and calls <code>slot_satisfied()</code>
-          with <code>submit_only=True</code> for tier2 slots, so init views that are
-          <em>too informative</em> are correctly rejected.
-          <br/><br/>
-          <strong>Result:</strong> init answerability drops to <strong>0 / 25 = 0.0%</strong> on the probe regression.
-        </div>
-      </div>
     </div>
 
     <!-- Validation -->
