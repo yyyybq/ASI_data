@@ -30,10 +30,13 @@
       "topdown_frame": "topdown.png",
       "video": "clip.mp4",
       "video_frames": [
-        "init.png",
+        "step_000.png",
+        "step_001.png",
         "step_002.png",
-        "target.png"
-      ]
+        "step_003.png"
+      ],
+      "video_mode": "all_rendered_step_frames",
+      "video_seconds_per_step": 0.5
     },
     {
       "task_index": 1,
@@ -73,10 +76,20 @@
       "topdown_frame": "topdown.png",
       "video": "clip.mp4",
       "video_frames": [
-        "init.png",
+        "step_000.png",
+        "step_001.png",
+        "step_002.png",
+        "step_003.png",
+        "step_004.png",
         "step_005.png",
-        "target.png"
-      ]
+        "step_006.png",
+        "step_007.png",
+        "step_008.png",
+        "step_009.png",
+        "step_010.png"
+      ],
+      "video_mode": "all_rendered_step_frames",
+      "video_seconds_per_step": 0.5
     },
     {
       "task_index": 2,
@@ -116,10 +129,20 @@
       "topdown_frame": "topdown.png",
       "video": "clip.mp4",
       "video_frames": [
-        "init.png",
+        "step_000.png",
+        "step_001.png",
+        "step_002.png",
+        "step_003.png",
+        "step_004.png",
         "step_005.png",
-        "target.png"
-      ]
+        "step_006.png",
+        "step_007.png",
+        "step_008.png",
+        "step_009.png",
+        "step_010.png"
+      ],
+      "video_mode": "all_rendered_step_frames",
+      "video_seconds_per_step": 0.5
     }
   ]
 }
